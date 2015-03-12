@@ -14,6 +14,7 @@
     - [ '{{ "dovecot-pop3d" if "pop3" in dovecot_protocols else [] }}' ]
     - [ '{{ "dovecot-lmtpd" if "lmtp" in dovecot_protocols else [] }}' ]
     - [ '{{ "dovecot-managesieved" if "managesieve" in dovecot_protocols else [] }}' ]
+    - [ '{{ "dovecot-gssapi" if "gssapi" in dovecot_auth_mechanisms else [] }}' ]
 
 - name: Divert original Dovecot configuration
   command: dpkg-divert --quiet --local --divert /etc/dovecot/conf.d/{{ item }}.dpkg-divert --rename /etc/dovecot/conf.d/{{ item }}

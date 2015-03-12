@@ -19,6 +19,11 @@ setup, you can provide your own template via lookup mechanism.
 disable_plaintext_auth=no
 {% endif %}
 
+{% if 'gssapi' in dovecot_auth_mechanisms %}
+auth_gssapi_hostname = {{ ansible_fqdn }}
+auth_krb5_keytab = /etc/dovecot/dovecot.keytab
+
+{% endif %}
 auth_mechanisms = {{ " ".join(dovecot_auth_mechanisms) }}
 
 ##
