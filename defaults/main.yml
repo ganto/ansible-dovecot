@@ -57,6 +57,16 @@ dovecot_deny_users: [ 'root' ]
 dovecot_mail_location: 'mbox:~/mail:INBOX=/var/mail/%u'
 
 
+# --------------------------------
+#   Authentication configuration
+# --------------------------------
+
+# .. envvar:: dovecot_krb5_keytab
+#
+# Kerberos keytab to use for the GSSAPI mechanism.
+dovecot_krb5_keytab: '/etc/dovecot/krb5.keytab'
+
+
 # ---------------------------
 #   PKI / TLS configuration
 # ---------------------------
