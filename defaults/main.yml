@@ -20,7 +20,7 @@ dovecot_protocols: [ 'imap' ]
 # .. envvar:: dovecot_auth
 #
 # List of authentication mechanisms enabled. So far supported are:
-# ``plain``, ``login``
+# ``plain``, ``login``, ``gssapi``
 dovecot_auth_mechanisms: [ 'plain', 'login' ]
 
 
