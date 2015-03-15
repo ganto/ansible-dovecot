@@ -63,7 +63,9 @@ dovecot_mail_location: 'mbox:~/mail:INBOX=/var/mail/%u'
 
 # .. envvar:: dovecot_krb5_keytab
 #
-# Kerberos keytab to use for the GSSAPI mechanism.
+# Kerberos keytab to use for the GSSAPI mechanism. Depending on which protocols
+# are enabled in ``dovecot_protocols``, the keytab must contain the service
+# principals: ``imap/fqdn@REALM``, ``pop/fqdn@REALM`` and/or ``sieve/fqdn@REALM``
 dovecot_krb5_keytab: '/etc/dovecot/krb5.keytab'
 
 
