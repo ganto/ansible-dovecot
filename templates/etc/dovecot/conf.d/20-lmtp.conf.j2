@@ -1,0 +1,20 @@
+# {{ ansible_managed }}
+{#
+
+This file follows the upstream default configuration except for the parts
+that are configurable via DebOps variables. If you need a more customized
+setup, you can provide your own template via lookup mechanism.
+
+#}
+
+##
+## LMTP specific settings
+##
+
+protocol lmtp {
+{% if dovecot_mail_plugins is defined and dovecot_mail_plugins %}
+{% if dovecot_mail_plugins.lmtp is defined and dovecot_mail_plugins.lmtp %}
+  mail_plugins = {{ " ".join(dovecot_mail_plugins.lmtp) }}
+{% endif %}
+{% endif %}
+}

@@ -38,6 +38,14 @@ dovecot_protocol_map: {}
 #  pop3s:
 #    port: 995
 #    allow: []
+#  lmtp:
+#    port: 24
+#    allow: False
+#    address: False
+#    socket: '/var/spool/postfix/private/dovecot-lmtp'
+#    mode: '0600'
+#    user: 'postfix'
+#    group: 'postfix'
 #  managesieve:
 #    port: 4190
 #    allow: []
@@ -47,12 +55,13 @@ dovecot_protocol_map: {}
 # .. envvar:: dovecot_mail_plugins
 #
 # Dict of mail plugins to enable for each protocol. Valid plugins are:
-# ``sieve`` (only LDA). See comment for configuration example.
+# ``sieve`` (only LDA and LMTP). See comment for configuration example.
 dovecot_mail_plugins: {}
 #  mail: []               # plugins to load for all services
 #  imap: []
 #  pop3: []
 #  lda: [ 'sieve' ]
+#  lmtp: [ 'sieve' ]
 
 
 # .. envvar:: dovecot_auth
@@ -87,6 +96,15 @@ dovecot_deny_users: [ 'root' ]
 # For more information about the supported format, check `Dovecot Mail
 # Location <http://wiki2.dovecot.org/MailLocation>`_
 dovecot_mail_location: 'mbox:~/mail:INBOX=/var/mail/%u'
+
+
+# .. envvar:: dovecot_lda_transport
+#
+# Transport destination for delivering mails via Dovecot LMTP. If enabled, it
+# will add a dependency to the debops.postfix role. Set this to ``False``
+# if you want a standalone Dovecot and/or deliver mails via Postfix
+# directly.
+dovecot_postfix_transport: 'lmtp:unix:{{ dovecot_postfix_lmtp_socket.name }}'
 
 
 # ---------------------------

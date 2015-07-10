@@ -1,0 +1,9 @@
+---
+
+# LMTP socket for postfix mail delivery
+dovecot_postfix_lmtp_socket:
+  name: 'private/dovecot-lmtp'
+  path: '/var/spool/postfix/'
+  mode: '0600'
+  user: 'postfix'
+  group: 'postfix'

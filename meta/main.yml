@@ -3,6 +3,13 @@
 dependencies:
   - role: debops.ferm
 
+  - role: debops.postfix
+    postfix_dependent_maincf:
+      - param: 'mailbox_transport'
+        value: '{{ dovecot_postfix_transport }}'
+        capabilities: 'local'
+    when: dovecot_postfix_transport is defined and dovecot_postfix_transport
+
 galaxy_info:
   author: 'Reto Gantenbein'
   description: 'Configure Dovecot IMAP/POP3 service'

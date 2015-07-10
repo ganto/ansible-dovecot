@@ -6,6 +6,10 @@ v0.2.0
 
 *Unreleased*
 
+- Add support for LMTP mail delivery protocol. If enabled it will depend
+  on ``debops.postfix`` by default and configure it to use Dovecot LMTP
+  for mail delivery. [ganto]
+
 - Replace ``dovecot_allow_<protocol>`` by ``dovecot_protocol_map`` which
   also offers to set custom ports for the individual protocols. [ganto]
 

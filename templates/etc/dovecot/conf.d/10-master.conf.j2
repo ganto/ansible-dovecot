@@ -21,8 +21,8 @@ service imap-login {
 {% endif %}
 {% endfor %}
 }
-{% endif %}
 
+{% endif %}
 {% if 'pop3' in dovecot_protocols or 'pop3' in dovecot_protocols %}
 service pop3-login {
 {% for proto in [ 'pop3', 'pop3s' ] %}
@@ -37,18 +37,74 @@ service pop3-login {
 {% endif %}
 {% endfor %}
 }
-{% endif %}
 
+{% endif %}
+{% if 'lmtp' in dovecot_protocols %}
+service lmtp {
+{% if 'lmtp' in dovecot_protocol_map %}
+{% if dovecot_protocol_map['lmtp'].socket is defined and dovecot_protocol_map['lmtp'].socket %}
+{% set dovecot_tpl_lmtp_socket = dovecot_protocol_map['lmtp'].socket %}
+{% elif not dovecot_protocol_map['lmtp'].socket is defined %}
+{% set dovecot_tpl_lmtp_socket = dovecot_postfix_lmtp_socket.path + dovecot_postfix_lmtp_socket.name %}
+{% endif %}
+{% if dovecot_protocol_map['lmtp'].mode is defined and dovecot_protocol_map['lmtp'].mode %}
+{% set dovecot_tpl_lmtp_mode = dovecot_protocol_map['lmtp'].mode %}
+{% endif %}
+{% if dovecot_protocol_map['lmtp'].user is defined and dovecot_protocol_map['lmtp'].user %}
+{% set dovecot_tpl_lmtp_user = dovecot_protocol_map['lmtp'].user %}
+{% endif %}
+{% if dovecot_protocol_map['lmtp'].group is defined and dovecot_protocol_map['lmtp'].group %}
+{% set dovecot_tpl_lmtp_group = dovecot_protocol_map['lmtp'].group %}
+{% endif %}
+{% else %}
+{% set dovecot_tpl_lmtp_socket = dovecot_postfix_lmtp_socket.path + dovecot_postfix_lmtp_socket.name %}
+{% endif %}
+{% if dovecot_tpl_lmtp_socket is defined and dovecot_tpl_lmtp_socket %}
+{% if not dovecot_tpl_lmtp_user is defined %}
+{% set dovecot_tpl_lmtp_user = dovecot_postfix_lmtp_socket.user %}
+{% endif %}
+{% if not dovecot_tpl_lmtp_group is defined %}
+{% set dovecot_tpl_lmtp_group = dovecot_postfix_lmtp_socket.group %}
+{% endif %}
+{% if not dovecot_tpl_lmtp_mode is defined %}
+{% set dovecot_tpl_lmtp_mode = dovecot_postfix_lmtp_socket.mode %}
+{% endif %}
+  unix_listener {{ dovecot_tpl_lmtp_socket }} {
+{% if dovecot_tpl_lmtp_user is defined and dovecot_tpl_lmtp_user %}
+    user = {{ dovecot_tpl_lmtp_user }}
+{% endif %}
+{% if dovecot_tpl_lmtp_group is defined and dovecot_tpl_lmtp_group %}
+    group = {{ dovecot_tpl_lmtp_group }}
+{% endif %}
+{% if dovecot_tpl_lmtp_mode is defined and dovecot_tpl_lmtp_mode %}
+    mode = {{ dovecot_tpl_lmtp_mode }}
+{% endif %}
+  }
+{% endif %}
+{% if 'lmtp' in dovecot_protocol_map.keys() %}
+{% if dovecot_protocol_map['lmtp'].address is defined and dovecot_protocol_map['lmtp'].address %}
+
+  inet_listener lmtp {
+    address = {{ dovecot_protocol_map['lmtp'].address }}
+{% if dovecot_protocol_map['lmtp'].port is defined and dovecot_protocol_map['lmtp'].port %}
+    port = {{ dovecot_protocol_map['lmtp'].port }}
+{% endif %}
+  }
+{% endif %}
+{% endif %}
+}
+
+{% endif %}
 {% if 'imap' in dovecot_protocols or 'imaps' in dovecot_protocols %}
 service imap {
 }
-{% endif %}
 
+{% endif %}
 {% if 'pop3' in dovecot_protocols or 'pop3' in dovecot_protocols %}
 service pop3 {
 }
-{% endif %}
 
+{% endif %}
 service auth {
   unix_listener auth-userdb {
   }

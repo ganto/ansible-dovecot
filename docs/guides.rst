@@ -73,12 +73,8 @@ it to the ``dovecot_mail_plugins`` configuration dictionary::
       lda: [ 'sieve' ]
 
 The Dovecot LDA would then deliver the mail after enquiring the sieve
-files.
-
-Another possibility would be to tell Postfix to forward the mail to the
-Dovecot LMTP (local mail transfer protocol) service which also supports
-sieve filtering. Unfortunately support for this hasn't been added to
-the corresponding DebOps rules yet.
+files. Alternatively mail can be delivered via LMTP protocol, which also
+supports sieve filtering (see section below).
 
 By default the Dovecot sieve plugin will store the user defined rules as
 plain text files in the ``~/sieve/`` folder. They can be managed directly
@@ -86,3 +82,43 @@ via file system, by a mail client which supports the ManageSieve protocol
 or alternatively by a tool like `sieve-connect`_.
 
 .. _sieve-connect: https://github.com/philpennock/sieve-connect/
+
+
+Enable LMTP to deliver mails from Postfix
+-----------------------------------------
+
+`LMTP`_ is a reliable, scalable and secure protocol to deliver mails
+into local mail boxes. It is implemented by Dovecot as an alternative
+to the Dovecot LDA and also supports most mail plugins, such as
+sieve filtering.
+
+It can be enabled by adding it to the ``dovecot_protocols`` list. E.g.::
+
+    dovecot_protocols: [ 'imap', 'imaps', 'lmtp' ]
+
+Without further configuration, this will instruct DebOps to setup a LMTP
+unix socket, which is then used by Postfix for mail delivery. In this
+case Postfix will be automatically added as a dependency and configured
+accordingly.
+
+To enable mail plugins specifically to LMTP only, they can be added to
+the ``dovecot_mail_plugins`` configuration::
+
+    dovecot_mail_plugins:
+      lmtp: [ 'sieve' ]
+
+In case your Postfix is not running on the same machine, you can enable
+a network socket where the LMTP service is listening on. E.g.::
+
+    dovecot_protocol_map:
+      lmtp:
+        port: 24
+        allow: [ '192.168.1.0/24' ]
+        address: 192.168.1.123
+
+This would bind LMTP to the local address 192.168.1.123 on port 24.
+Additionally, access is restricted by `ansible-ferm`_ to the given
+network.
+
+.. _LMTP: http://wiki2.dovecot.org/LMTP
+.. _ansible-ferm: https://github.com/debops/ansible-ferm

@@ -1,15 +1,23 @@
 # {{ ansible_managed }}
 
-{% for protocol in [ 'imap', 'imaps', 'pop3', 'pop3s', 'managesieve' ] %}
+{% for protocol in [ 'imap', 'imaps', 'pop3', 'pop3s', 'lmtp', 'managesieve' ] %}
 {% if protocol in dovecot_protocols %}
 {% if protocol not in dovecot_protocol_map.keys() %}
+{% if protocol == 'lmtp' %}
+{% set protocol_allow = False %}
+{% else %}
 {% set protocol_allow = [] %}
+{% endif %}
 {% set protocol_service = protocol %}
 {% else %}
 {% if dovecot_protocol_map[protocol].allow is defined %}
 {% set protocol_allow = dovecot_protocol_map[protocol].allow %}
 {% else %}
+{% if protocol == 'lmtp' %}
+{% set protocol_allow = False %}
+{% else %}
 {% set protocol_allow = [] %}
+{% endif %}
 {% endif %}
 {% if dovecot_protocol_map[protocol].port is defined %}
 {% set protocol_service = dovecot_protocol_map[protocol].port %}
@@ -19,6 +27,9 @@
 {% endif %}
 {% if protocol_service == 'managesieve' %}
 {% set protocol_service = 'sieve' %}
+{% endif %}
+{% if protocol_service == 'lmtp' %}
+{% set protocol_service = '24' %}
 {% endif %}
 {% if protocol_allow != False %}
 protocol tcp dport {{ protocol_service }} {
