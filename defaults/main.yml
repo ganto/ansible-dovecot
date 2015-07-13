@@ -44,6 +44,13 @@ dovecot_protocol_map: {}
 #    mail_max_userip_connections: 10
 
 
+# .. envvar:: dovecot_mail_plugins
+#
+# List of mail plugins to enable. So far supported are:
+# ``sieve``
+dovecot_mail_plugins: []
+
+
 # .. envvar:: dovecot_auth
 #
 # List of authentication mechanisms enabled. So far supported are:

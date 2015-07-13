@@ -12,6 +12,4 @@ setup, you can provide your own template via lookup mechanism.
 ##
 
 protocol lda {
-    mail_plugins = $mail_plugins {% if 'managesieve' in dovecot_protocols %}sieve{% endif %}
-
 }

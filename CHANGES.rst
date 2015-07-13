@@ -9,6 +9,10 @@ v0.2.0
 - Replace ``dovecot_allow_<protocol>`` by ``dovecot_protocol_map`` which
   also offers to set custom ports for the individual protocols. [ganto]
 
+- Add new variable ``dovecot_mail_plugins`` to separate protocol and plugin
+  configuration. If you use Dovecot as LDA and want sieve filtering, you
+  now have to add ``sieve`` to the plugin list. [ganto]
+
 v0.1.0
 ------
 

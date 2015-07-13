@@ -23,3 +23,11 @@ mail_location = {{ dovecot_mail_location }}
 namespace inbox {
   inbox = yes
 }
+
+##
+## Mail processes
+##
+
+{% if dovecot_mail_plugins is defined and dovecot_mail_plugins %}
+mail_plugins = {{ " ".join(dovecot_mail_plugins) }}
+{% endif %}

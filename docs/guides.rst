@@ -66,6 +66,11 @@ agent)::
 
     | "/usr/lib/dovecot/dovecot-lda"
 
+To enable the sieve filter with the Dovecot LDA you further have to add
+it to the ``dovecot_mail_plugins`` list::
+
+    dovecot_mail_plugins: [ 'sieve' ]
+
 The Dovecot LDA would then deliver the mail after enquiring the sieve
 files.
 
