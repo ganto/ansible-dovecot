@@ -46,9 +46,13 @@ dovecot_protocol_map: {}
 
 # .. envvar:: dovecot_mail_plugins
 #
-# List of mail plugins to enable. So far supported are:
-# ``sieve``
-dovecot_mail_plugins: []
+# Dict of mail plugins to enable for each protocol. Valid plugins are:
+# ``sieve`` (only LDA). See comment for configuration example.
+dovecot_mail_plugins: {}
+#  mail: []               # plugins to load for all services
+#  imap: []
+#  pop3: []
+#  lda: [ 'sieve' ]
 
 
 # .. envvar:: dovecot_auth

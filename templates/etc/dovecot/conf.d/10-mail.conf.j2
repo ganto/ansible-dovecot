@@ -29,5 +29,7 @@ namespace inbox {
 ##
 
 {% if dovecot_mail_plugins is defined and dovecot_mail_plugins %}
-mail_plugins = {{ " ".join(dovecot_mail_plugins) }}
+{% if dovecot_mail_plugins.mail is defined and dovecot_mail_plugins.mail %}
+mail_plugins = {{ " ".join(dovecot_mail_plugins.mail) }}
+{% endif %}
 {% endif %}

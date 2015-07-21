@@ -12,4 +12,9 @@ setup, you can provide your own template via lookup mechanism.
 ##
 
 protocol pop3 {
+{% if dovecot_mail_plugins is defined and dovecot_mail_plugins %}
+{% if dovecot_mail_plugins.pop3 is defined and dovecot_mail_plugins.pop3 %}
+  mail_plugins = {{ " ".join(dovecot_mail_plugins.pop3) }}
+{% endif %}
+{% endif %}
 }

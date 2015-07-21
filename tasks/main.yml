@@ -13,7 +13,7 @@
     - [ '{{ "dovecot-imapd" if ("imap" in dovecot_protocols or "imaps" in dovecot_protocols) else [] }}' ]
     - [ '{{ "dovecot-pop3d" if ("pop3" in dovecot_protocols or "pop3s" in dovecot_protocols) else [] }}' ]
     - [ '{{ "dovecot-managesieved" if "managesieve" in dovecot_protocols else [] }}' ]
-    - [ '{{ "dovecot-sieve" if "sieve" in dovecot_mail_plugins else [] }}' ]
+    - [ '{{ "dovecot-sieve" if "sieve" in lookup("flattened", dovecot_mail_plugins.values()) else [] }}' ]
 
 - name: Divert original Dovecot configuration
   command: dpkg-divert --quiet --local --divert /etc/dovecot/conf.d/{{ item }}.dpkg-divert --rename /etc/dovecot/conf.d/{{ item }}
@@ -23,7 +23,7 @@
     - [ '{{ "20-imap.conf" if ("imap" in dovecot_protocols or "imaps" in dovecot_protocols) else [] }}' ]
     - [ '{{ "20-pop3.conf" if ("pop3" in dovecot_protocols or "pop3s" in dovecot_protocols) else [] }}' ]
     - [ '{{ "20-managesieve.conf" if "managesieve" in dovecot_protocols else [] }}' ]
-    - [ '{{ [ "90-sieve.conf", "90-sieve-extprograms.conf" ] if "sieve" in dovecot_mail_plugins else [] }}' ]
+    - [ '{{ [ "90-sieve.conf", "90-sieve-extprograms.conf" ] if "sieve" in lookup("flattened", dovecot_mail_plugins.values()) else [] }}' ]
   notify: [ 'Restart dovecot' ]
 
 - name: Remove redundant Dovecot configurations
@@ -34,7 +34,7 @@
     - [ '{{ "20-imap.conf" if ("imap" not in dovecot_protocols and "imap" not in dovecot_protocols) else [] }}' ]
     - [ '{{ "20-pop3.conf" if ("pop3" not in dovecot_protocols and "pop3s" not in dovecot_protocols) else [] }}' ]
     - [ '{{ "20-managesieve.conf" if "managesieve" not in dovecot_protocols else [] }}' ]
-    - [ '{{ [ "90-sieve.conf", "90-sieve-extprograms.conf" ] if "sieve" not in dovecot_mail_plugins else [] }}' ]
+    - [ '{{ [ "90-sieve.conf", "90-sieve-extprograms.conf" ] if "sieve" not in lookup("flattened", dovecot_mail_plugins.values()) else [] }}' ]
   notify: [ 'Restart dovecot' ]
 
 - name: Remove diversion of original Dovecot configuration
@@ -44,7 +44,7 @@
     - [ '{{ "20-imap.conf" if ("imap" not in dovecot_protocols and "imaps" not in dovecot_protocols) else [] }}' ]
     - [ '{{ "20-pop3.conf" if ("pop3" not in dovecot_protocols and "pop3s" not in dovecot_protocols) else [] }}' ]
     - [ '{{ "20-managesieve.conf" if "managesieve" not in dovecot_protocols else [] }}' ]
-    - [ '{{ [ "90-sieve.conf", "90-sieve-extprograms.conf" ] if "sieve" not in dovecot_mail_plugins else [] }}' ]
+    - [ '{{ [ "90-sieve.conf", "90-sieve-extprograms.conf" ] if "sieve" not in lookup("flattened", dovecot_mail_plugins.values()) else [] }}' ]
 
 - name: Uninstall disabled Dovecot protocols
   apt:
@@ -54,7 +54,7 @@
     - [ '{{ "dovecot-imapd" if ("imap" not in dovecot_protocols and "imaps" not in dovecot_protocols) else [] }}' ]
     - [ '{{ "dovecot-pop3d" if ("pop3" not in dovecot_protocols and "pop3s" not in dovecot_protocols) else [] }}' ]
     - [ '{{ "dovecot-managesieved" if "managesieve" not in dovecot_protocols else [] }}' ]
-    - [ '{{ "dovecot-sieve" if "sieve" not in dovecot_mail_plugins else [] }}' ]
+    - [ '{{ "dovecot-sieve" if "sieve" not in lookup("flattened", dovecot_mail_plugins.values()) else [] }}' ]
   notify: [ 'Restart dovecot' ]
 
 - name: Generate Dovecot configuration
@@ -69,7 +69,7 @@
     - [ '{{ "20-imap.conf" if ("imap" in dovecot_protocols or "imaps" in dovecot_protocols) else [] }}' ]
     - [ '{{ "20-pop3.conf" if ("pop3" in dovecot_protocols or "pop3s" in dovecot_protocols) else [] }}' ]
     - [ '{{ "20-managesieve.conf" if "managesieve" in dovecot_protocols else [] }}' ]
-    - [ '{{ [ "90-sieve.conf", "90-sieve-extprograms.conf" ] if "sieve" in dovecot_mail_plugins else [] }}' ]
+    - [ '{{ [ "90-sieve.conf", "90-sieve-extprograms.conf" ] if "sieve" in lookup("flattened", dovecot_mail_plugins.values()) else [] }}' ]
   notify: [ 'Restart dovecot' ]
 
 - name: Generate Dovecot local configuration

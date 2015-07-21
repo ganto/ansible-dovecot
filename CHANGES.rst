@@ -11,7 +11,7 @@ v0.2.0
 
 - Add new variable ``dovecot_mail_plugins`` to separate protocol and plugin
   configuration. If you use Dovecot as LDA and want sieve filtering, you
-  now have to add ``sieve`` to the plugin list. [ganto]
+  now have to add ``lda: [ 'sieve' ]`` to the plugin dict. [ganto]
 
 v0.1.0
 ------

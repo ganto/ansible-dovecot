@@ -12,4 +12,9 @@ setup, you can provide your own template via lookup mechanism.
 ##
 
 protocol imap {
+{% if dovecot_mail_plugins is defined and dovecot_mail_plugins %}
+{% if dovecot_mail_plugins.imap is defined and dovecot_mail_plugins.imap %}
+  mail_plugins = {{ " ".join(dovecot_mail_plugins.imap) }}
+{% endif %}
+{% endif %}
 }
