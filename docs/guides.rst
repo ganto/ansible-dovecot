@@ -52,9 +52,11 @@ The ManageSieve protocol listens on port 4190 and requires STARTTLS for
 authentication. You can restrict access to this port by explicitly listing
 the networks or hosts which are allowed to connect::
 
-    dovecot_protocol_map:
+    dovecot_service_map:
       managesieve:
-        allow: [ '192.168.1.0/24' ]
+        inet_listener:
+          sieve:
+            allow: [ '192.168.1.0/24' ]
 
 The sieve filter rules are applied before delivering the mail to the user's
 mailbox. There are various ways for mail delivery but only a few of them

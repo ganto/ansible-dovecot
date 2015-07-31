@@ -1,0 +1,47 @@
+{# This macro will output the key configuration for a given protocol and
+   service definition. If no user defined value is set in dovecot_service_map
+   it will fallback to dovecot_service_map_defaults.
+#}
+{% macro service_query(protocol, name, key, type='inet_listener') %}
+{% if dovecot_service_map is defined and dovecot_service_map %}{# if-1 #}
+{% if protocol in dovecot_service_map.keys() %}{# if-2 #}
+{% if type in dovecot_service_map[protocol].keys() %}{# if-3 #}
+{% if name in dovecot_service_map[protocol][type] %}{# if-4 #}
+{% if key in dovecot_service_map[protocol][type][name] %}{# if-5 #}
+{{ dovecot_service_map[protocol][type][name][key] }}{% else %}{# else-5 #}
+{{ dovecot_default_service_map[protocol][type][name][key] }}{% endif %}{# endif-5 #}
+{% else %}{# else-4 #}
+{{ dovecot_default_service_map[protocol][type][name][key] }}{% endif %}{# endif-4 #}
+{% else %}{# else-3 #}
+{{ dovecot_default_service_map[protocol][type][name][key] }}{% endif %}{# endif-3 #}
+{% else %}{# else-2 #}
+{{ dovecot_default_service_map[protocol][type][name][key] }}{% endif %}{# endif-2 #}
+{% else %}{# else-1 #}
+{{ dovecot_default_service_map[protocol][type][name][key] }}{% endif %}{# endif-1 #}
+{% endmacro %}
+
+
+{# This macro will list the protocols defined in the dovecot_service_map and
+   dovecot_service_map_defaults
+#}
+{% macro protocol_list() %}
+{% if dovecot_service_map is defined and dovecot_service_map %}{# if-1 #}
+{{ (dovecot_service_map.keys() + dovecot_default_service_map.keys()) | unique | list }}{% else %}{# else-1 #}
+{{ dovecot_default_service_map.keys() }}{% endif %}{# endif-1 #}
+{% endmacro %}
+
+
+{# This macro will list the services defined in the dovecot_service_map and
+   dovecot_service_map_defaults
+#}
+{% macro service_list(protocol, type='inet_listener') %}
+{% if dovecot_service_map is defined and dovecot_service_map %}{# if-1 #}
+{% if protocol in dovecot_service_map.keys() %}{# if-2 #}
+{% if type in dovecot_service_map[protocol].keys() %}{# if-3 #}
+{{ (dovecot_service_map[protocol][type].keys() + dovecot_default_service_map[protocol][type].keys()) | unique | list }}{% else %}{# else-3 #}
+{{ dovecot_default_service_map[protocol][type].keys() }}{% endif %}{# endif-3 #}
+{% else %}{# else-2 #}
+{{ dovecot_default_service_map[protocol][type].keys() }}{% endif %}{# endif-2 #}
+{% else %}{# else-1 #}
+{{ dovecot_default_service_map[protocol][type].keys() }}{% endif %}{# endif-1 #}
+{% endmacro %}

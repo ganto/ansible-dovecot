@@ -1,37 +1,32 @@
 # {{ ansible_managed }}
+{% import 'dovecot_macros.j2' as macro with context %}
+{# the macro output is a list formatted string, therefore need to "cast"
+   it to a list again #}
+{% set dovecot_tpl_protocols = macro.protocol_list() | replace("[", "") | replace("]", "") | replace("'", "") | replace(" ", "") | split(",") %}
 
-{% for protocol in [ 'imap', 'imaps', 'pop3', 'pop3s', 'managesieve' ] %}
-{% if protocol in dovecot_protocols %}
-{% if protocol not in dovecot_protocol_map.keys() %}
-{% set protocol_allow = [] %}
-{% set protocol_service = protocol %}
-{% else %}
-{% if dovecot_protocol_map[protocol].allow is defined %}
-{% set protocol_allow = dovecot_protocol_map[protocol].allow %}
-{% else %}
-{% set protocol_allow = [] %}
-{% endif %}
-{% if dovecot_protocol_map[protocol].port is defined %}
-{% set protocol_service = dovecot_protocol_map[protocol].port %}
-{% else %}
-{% set protocol_service = protocol %}
-{% endif %}
-{% endif %}
-{% if protocol_service == 'managesieve' %}
-{% set protocol_service = 'sieve' %}
-{% endif %}
-{% if protocol_allow != False %}
-protocol tcp dport {{ protocol_service }} {
-{% if protocol_allow %}
-	@def $ITEMS = ( @ipfilter( ({{ protocol_allow | unique | join(" ") }}) ) );
+{% for protocol in dovecot_tpl_protocols %}{# for-1 #}
+{% set dovecot_tpl_services = macro.service_list(protocol) | replace("[", "") | replace("]", "") | replace("'", "") | replace(" ", "") | split(",") %}
+{% for service in dovecot_tpl_services %}{# for-2 #}
+{% if service | replace("sieve", "managesieve") in dovecot_protocols %}{# if-1 #}
+{% set dovecot_tpl_ferm_allow = macro.service_query(protocol, service, 'allow') | replace("[", "") | replace("]", "") | replace("u'", "") | replace("'", "") | replace(" ", "") | split(",") %}
+{% set dovecot_tpl_ferm_service = macro.service_query(protocol, service, 'port') %}
+{% if dovecot_tpl_ferm_allow != False %}{# if-2 #}
+protocol tcp dport {{ dovecot_tpl_ferm_service }} {
+{% if dovecot_tpl_ferm_allow %}{# if-3 #}
+{% if dovecot_tpl_ferm_allow[0] | length > 0 %}{# if-4 #}
+	@def $ITEMS = ( @ipfilter( ({{ dovecot_tpl_ferm_allow | unique | join(" ") }}) ) );
 	@if @ne($ITEMS,"") {
 		saddr $ITEMS ACCEPT;
 	}
-{% else %}
+{% else %}{# else-4 #}
+    ACCEPT;
+{% endif %}{# endif-4 #}
+{% else %}{# else-3 #}
 	ACCEPT;
-{% endif %}
+{% endif %}{# endif-3 #}
 }
 
-{% endif %}
-{% endif %}
-{% endfor %}
+{% endif %}{# endif-2 #}
+{% endif %}{# endif-1 #}
+{% endfor %}{# endfor-2 #}
+{% endfor %}{# endfor-1 #}

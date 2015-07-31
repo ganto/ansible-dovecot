@@ -6,24 +6,34 @@ that are configurable via DebOps variables. If you need a more customized
 setup, you can provide your own template via lookup mechanism.
 
 #}
+{% import 'dovecot_macros.j2' as macro with context %}
+{% set dovecot_tpl_proto = 'managesieve' %}
+{# the macro output is a list formatted string, therefore need to "cast"
+   it to a list again #}
+{% set dovecot_tpl_services = macro.service_list(dovecot_tpl_proto) | replace("[", "") | replace("]", "") | replace("'", "") | replace(" ", "") | split(",") %}
 
 ##
 ## ManageSieve specific settings
 ##
 
-{% if dovecot_protocol_map is defined and dovecot_protocol_map %}
-{% if 'managesieve' in dovecot_protocol_map.keys() %}
-{% if dovecot_protocol_map['managesieve'].port is defined and
-      dovecot_protocol_map['managesieve'].port %}
 service managesieve-login {
-  inet_listener sieve {
-    port = {{ dovecot_protocol_map['managesieve'].port }}
+{% for dovecot_tpl_listener in dovecot_tpl_services %}
+  inet_listener '{{ dovecot_tpl_listener }}' {
+{% set dovecot_tpl_sieve_port = macro.service_query(dovecot_tpl_proto, dovecot_tpl_listener, 'port') %}
+{% if dovecot_tpl_listener in dovecot_default_service_map[dovecot_tpl_proto]['inet_listener'].keys() %}
+{% if dovecot_tpl_sieve_port != dovecot_default_service_map[dovecot_tpl_proto]['inet_listener'][dovecot_tpl_listener].port | string %}
+    port = {{ dovecot_tpl_sieve_port }}
+{% endif %}
+{# default port mustn't be printed as it is created by default when enabling
+   the protocol #}
+{% else %}
+    port = {{ dovecot_tpl_sieve_port }}
+{% endif %}
   }
 }
+{% endfor %}
 
-{% endif %}
-{% endif %}
-{% endif %}
+{#
 protocol sieve {
 {% if dovecot_protocol_map is defined and dovecot_protocol_map %}
 {% if 'managesieve' in dovecot_protocol_map.keys() %}
@@ -34,3 +44,4 @@ protocol sieve {
 {% endif %}
 {% endif %}
 }
+#}

@@ -6,49 +6,48 @@ that are configurable via DebOps variables. If you need a more customized
 setup, you can provide your own template via lookup mechanism.
 
 #}
+{% import 'dovecot_macros.j2' as macro with context %}
 
 {% if 'imap' in dovecot_protocols or 'imaps' in dovecot_protocols %}
+{% set dovecot_tpl_proto = 'imap' %}
+{# the macro output is a list formatted string, therefore need to "cast"
+   it to a list again #}
+{% set dovecot_tpl_services = macro.service_list(dovecot_tpl_proto) | replace("[", "") | replace("]", "") | replace("'", "") | replace(" ", "") | split(",") %}
 service imap-login {
-{% for proto in [ 'imap', 'imaps' ] %}
-{% if proto in dovecot_protocols %}
-  inet_listener {{ proto }} {
-{% if dovecot_protocol_map[proto] is defined and dovecot_protocol_map[proto] %}
-{% if dovecot_protocol_map[proto].port is defined and dovecot_protocol_map[proto].port %}
-    port = {{ dovecot_protocol_map[proto].port }}
-{% endif %}
-{% endif %}
+{% for dovecot_tpl_listener in dovecot_tpl_services %}
+{% if dovecot_tpl_listener in dovecot_protocols %}
+  inet_listener {{ dovecot_tpl_listener }} {
+    port = {{ macro.service_query(dovecot_tpl_proto, dovecot_tpl_listener, 'port') }}
   }
 {% endif %}
 {% endfor %}
 }
-{% endif %}
 
-{% if 'pop3' in dovecot_protocols or 'pop3' in dovecot_protocols %}
+{% endif %}
+{% if 'pop' in dovecot_protocols or 'pop3' in dovecot_protocols %}
+{% set dovecot_tpl_proto = 'pop3' %}
+{% set dovecot_tpl_services = macro.service_list(dovecot_tpl_proto) | replace("[", "") | replace("]", "") | replace("'", "") | replace(" ", "") | split(",") %}
 service pop3-login {
-{% for proto in [ 'pop3', 'pop3s' ] %}
-{% if proto in dovecot_protocols %}
-  inet_listener {{ proto }} {
-{% if dovecot_protocol_map[proto] is defined and dovecot_protocol_map[proto] %}
-{% if dovecot_protocol_map[proto].port is defined and dovecot_protocol_map[proto].port %}
-    port = {{ dovecot_protocol_map[proto].port }}
-{% endif %}
-{% endif %}
+{% for dovecot_tpl_listener in dovecot_tpl_services %}
+{% if dovecot_tpl_listener in dovecot_protocols %}
+  inet_listener {{ dovecot_tpl_listener }} {
+    port = {{ macro.service_query(dovecot_tpl_proto, dovecot_tpl_listener, 'port') }}
   }
 {% endif %}
 {% endfor %}
 }
-{% endif %}
 
+{% endif %}
 {% if 'imap' in dovecot_protocols or 'imaps' in dovecot_protocols %}
 service imap {
 }
-{% endif %}
 
+{% endif %}
 {% if 'pop3' in dovecot_protocols or 'pop3' in dovecot_protocols %}
 service pop3 {
 }
-{% endif %}
 
+{% endif %}
 service auth {
   unix_listener auth-userdb {
   }

@@ -12,36 +12,42 @@
 
 # .. envvar:: dovecot_protocols
 #
-# List of protocols to enable. See ``dovecot_protocol_map`` for supported
-# protocols.
+# List of protocols to enable. So far supported are:
+# ``imap``, ``imaps``, ``pop3``, ``pop3s``, ``managesieve``
 dovecot_protocols: [ 'imap', 'imaps' ]
 
 
-# .. envvar:: dovecot_protocol_map
+# .. envvar:: dovecot_service_map
 #
-# List of protocol definitions. The default configuration will use the
+# List of service definitions. The default configuration will use the
 # standard ports as shown below and allow access from all networks. You
 # can overwrite the defaults by setting a custom value here. Access to
 # specific hosts or networks can be restricted by using the ``allow``
 # keyword. ``allow = False`` means that remote access will be blocked by
-# iptables.
-dovecot_protocol_map: {}
+# iptables. You can overwrite individual values by uncommenting them
+# here.
+dovecot_service_map: {}
 #  imap:
-#    port: 143
-#    allow: []
-#  imaps:
-#    port: 993
-#    allow: []
+#    inet_listener:
+#      imap:
+#        port: 143
+#        allow: []
+#      imaps:
+#        port: 995
+#        allow: []
 #  pop3:
-#    port: 110
-#    allow: []
-#  pop3s:
-#    port: 995
-#    allow: []
+#    inet_listener:
+#      pop3:
+#        port: 110
+#        allow: []
+#      pop3s:
+#        port: 995
+#        allow: []
 #  managesieve:
-#    port: 4190
-#    allow: []
-#    mail_max_userip_connections: 10
+#    inet_listener:
+#      sieve:
+#        port: 4190
+#        allow: []
 
 
 # .. envvar:: dovecot_auth
